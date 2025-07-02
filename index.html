@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visualizador de Requisitos do Projeto</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Chosen Palette: "Calm Neutral" -->
+  <!-- Application Structure Plan: A single-page, section-based layout was chosen because the source material is textual and structural, not primarily numerical. The goal is to make a dense document scannable and comparable. The key interaction is filtering the permissions table by user role, which is the most complex piece of information and benefits most from interactivity. Collapsible sections for requirements reduce initial information overload. A simple chart is included to visually represent a functional requirement (the admin dashboard), making the concept more tangible. This structure translates the report's logical sections into a user-friendly, interactive format. -->
+  <!-- Visualization & Content Choices: 1. Permissions Table: Report Info -> User permissions table; Goal -> Compare roles; Viz -> Interactive HTML Table with JS-driven styling; Interaction -> Role filter buttons highlight permissions; Justification -> More engaging and clearer than a static table. 2. Requirements: Report Info -> FR/NFR lists; Goal -> Organize; Viz -> Collapsible accordion sections; Interaction -> Click to expand/collapse; Justification -> Prevents a wall of text. 3. Tech Stack: Report Info -> Technology list; Goal -> Inform; Viz -> Styled HTML grid/cards; Interaction -> Static display; Justification -> More visually appealing than a list. 4. Admin Dashboard Chart: Report Info -> FR02 (Admin Dashboard); Goal -> Illustrate a feature; Viz -> Chart.js Doughnut Chart; Interaction -> Filter dropdown and hover tooltips; Justification -> Provides a tangible example of a key system feature. -->
+  <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    .table-highlight {
+      transition: all 0.3s ease-in-out;
+    }
+  </style>
+</head>
+
+<body class="bg-stone-50 text-stone-800">
+
+  <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 border-b border-stone-200">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center">
+          <span class="font-bold text-xl text-stone-900">📄 Requisitos do Projeto</span>
+        </div>
+        <div class="hidden md:block">
+          <div class="ml-10 flex items-baseline space-x-4">
+            <a href="#visao-geral"
+              class="text-stone-600 hover:bg-stone-200 hover:text-stone-900 px-3 py-2 rounded-md text-sm font-medium">Visão
+              Geral</a>
+            <a href="#permissoes"
+              class="text-stone-600 hover:bg-stone-200 hover:text-stone-900 px-3 py-2 rounded-md text-sm font-medium">Permissões</a>
+            <a href="#requisitos"
+              class="text-stone-600 hover:bg-stone-200 hover:text-stone-900 px-3 py-2 rounded-md text-sm font-medium">Requisitos</a>
+            <a href="#tecnologias"
+              class="text-stone-600 hover:bg-stone-200 hover:text-stone-900 px-3 py-2 rounded-md text-sm font-medium">Tecnologias</a>
+            <a href="#custos"
+              class="text-stone-600 hover:bg-stone-200 hover:text-stone-900 px-3 py-2 rounded-md text-sm font-medium">Custos</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+
+    <section id="visao-geral" class="mb-16 scroll-mt-24">
+      <div class="bg-white p-8 rounded-2xl shadow-sm border border-stone-200">
+        <h1 class="text-3xl md:text-4xl font-bold text-stone-900 mb-4">Sistema de Gestão Interna</h1>
+        <p class="text-lg text-stone-600 mb-6">Esta aplicação interativa resume os requisitos técnicos e funcionais para
+          um novo sistema de gestão interna. O objetivo do sistema é centralizar, organizar e proteger o fluxo de
+          informações e documentos, otimizando o trabalho das equipes de recepção e conselheiros, sob a supervisão de um
+          administrador.</p>
+        <div class="w-24 h-1 bg-teal-500 rounded-full"></div>
+      </div>
+    </section>
+
+    <section id="permissoes" class="mb-16 scroll-mt-24">
+      <h2 class="text-3xl font-bold text-stone-900 mb-2">Perfis de Usuário e Níveis de Acesso</h2>
+      <p class="text-stone-600 mb-6">O controle de acesso é baseado em papéis (RBAC). Clique nos botões abaixo para
+        filtrar as permissões e visualizar rapidamente as responsabilidades de cada perfil dentro do sistema.</p>
+
+      <div class="flex flex-wrap gap-2 mb-6">
+        <button data-role="todos"
+          class="role-btn bg-teal-600 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm">Ver
+          Todos</button>
+        <button data-role="administrador"
+          class="role-btn bg-white text-stone-700 px-4 py-2 rounded-lg text-sm font-semibold border border-stone-300">Administrador</button>
+        <button data-role="recepcao"
+          class="role-btn bg-white text-stone-700 px-4 py-2 rounded-lg text-sm font-semibold border border-stone-300">Recepção</button>
+        <button data-role="conselheiro"
+          class="role-btn bg-white text-stone-700 px-4 py-2 rounded-lg text-sm font-semibold border border-stone-300">Conselheiro</button>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-sm border border-stone-200 overflow-hidden">
+        <div class="overflow-x-auto">
+          <table id="permissions-table" class="w-full text-sm text-left text-stone-600">
+            <thead class="text-xs text-stone-700 uppercase bg-stone-100">
+              <tr>
+                <th scope="col" class="px-6 py-3 min-w-[200px]">Funcionalidade</th>
+                <th scope="col" class="px-6 py-3 text-center">Administrador</th>
+                <th scope="col" class="px-6 py-3 text-center">Recepção</th>
+                <th scope="col" class="px-6 py-3 text-center">Conselheiro</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="bg-stone-50 font-semibold">
+                <td colspan="4" class="px-6 py-3">Autenticação</td>
+              </tr>
+              <tr class="bg-white border-b border-stone-200">
+                <td class="px-6 py-4 font-medium text-stone-900">Login / Logout</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="administrador">✅</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="recepcao">✅</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="conselheiro">✅</td>
+              </tr>
+              <tr class="bg-white border-b border-stone-200">
+                <td class="px-6 py-4 font-medium text-stone-900">Alterar própria senha</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="administrador">✅</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="recepcao">✅</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="conselheiro">✅</td>
+              </tr>
+              <tr class="bg-stone-50 font-semibold">
+                <td colspan="4" class="px-6 py-3">Gestão de Usuários</td>
+              </tr>
+              <tr class="bg-white border-b border-stone-200">
+                <td class="px-6 py-4 font-medium text-stone-900">Criar novo usuário</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="administrador">✅</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="recepcao">❌</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="conselheiro">❌</td>
+              </tr>
+              <tr class="bg-white border-b border-stone-200">
+                <td class="px-6 py-4 font-medium text-stone-900">Visualizar todos os usuários</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="administrador">✅</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="recepcao">❌</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="conselheiro">❌</td>
+              </tr>
+              <tr class="bg-white border-b border-stone-200">
+                <td class="px-6 py-4 font-medium text-stone-900">Editar dados de usuários</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="administrador">✅</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="recepcao">❌</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="conselheiro">❌</td>
+              </tr>
+              <tr class="bg-white border-b border-stone-200">
+                <td class="px-6 py-4 font-medium text-stone-900">Ativar/Inativar usuários</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="administrador">✅</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="recepcao">❌</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="conselheiro">❌</td>
+              </tr>
+              <tr class="bg-stone-50 font-semibold">
+                <td colspan="4" class="px-6 py-3">Gestão de Documentos</td>
+              </tr>
+              <tr class="bg-white border-b border-stone-200">
+                <td class="px-6 py-4 font-medium text-stone-900">Upload de novos documentos</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="administrador">✅</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="recepcao">✅</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="conselheiro">❌</td>
+              </tr>
+              <tr class="bg-white border-b border-stone-200">
+                <td class="px-6 py-4 font-medium text-stone-900">Associar documento a um processo/cliente</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="administrador">✅</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="recepcao">✅</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="conselheiro">❌</td>
+              </tr>
+              <tr class="bg-white border-b border-stone-200">
+                <td class="px-6 py-4 font-medium text-stone-900">Visualizar documentos</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="administrador">✅</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="recepcao">✅</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="conselheiro">✅</td>
+              </tr>
+              <tr class="bg-white border-b border-stone-200">
+                <td class="px-6 py-4 font-medium text-stone-900">Download de documentos</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="administrador">✅</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="recepcao">✅</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="conselheiro">✅</td>
+              </tr>
+              <tr class="bg-white border-b border-stone-200">
+                <td class="px-6 py-4 font-medium text-stone-900">Excluir documentos</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="administrador">✅</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="recepcao">❌</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="conselheiro">❌</td>
+              </tr>
+              <tr class="bg-stone-50 font-semibold">
+                <td colspan="4" class="px-6 py-3">Gestão de Processos/Atendimentos</td>
+              </tr>
+              <tr class="bg-white border-b border-stone-200">
+                <td class="px-6 py-4 font-medium text-stone-900">Criar novo processo/atendimento</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="administrador">✅</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="recepcao">✅</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="conselheiro">✅</td>
+              </tr>
+              <tr class="bg-white border-b border-stone-200">
+                <td class="px-6 py-4 font-medium text-stone-900">Visualizar todos os processos</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="administrador">✅</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="recepcao">✅</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="conselheiro">✅</td>
+              </tr>
+              <tr class="bg-white border-b border-stone-200">
+                <td class="px-6 py-4 font-medium text-stone-900">Editar dados de um processo</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="administrador">✅</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="recepcao">✅</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="conselheiro">✅</td>
+              </tr>
+              <tr class="bg-white border-b border-stone-200">
+                <td class="px-6 py-4 font-medium text-stone-900">Adicionar notas/atualizações a um processo</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="administrador">✅</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="recepcao">✅</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="conselheiro">✅</td>
+              </tr>
+              <tr class="bg-stone-50 font-semibold">
+                <td colspan="4" class="px-6 py-3">Dashboard e Relatórios</td>
+              </tr>
+              <tr class="bg-white border-b border-stone-200">
+                <td class="px-6 py-4 font-medium text-stone-900">Visualizar dashboard com estatísticas gerais</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="administrador">✅</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="recepcao">✅</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="conselheiro">✅</td>
+              </tr>
+              <tr class="bg-white">
+                <td class="px-6 py-4 font-medium text-stone-900">Gerar relatórios de produtividade/atividades</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="administrador">
+                  <✅ /td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="recepcao">✅</td>
+                <td class="px-6 py-4 text-center table-cell-data" data-role="conselheiro">✅</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="requisitos" class="mb-16 scroll-mt-24">
+      <h2 class="text-3xl font-bold text-stone-900 mb-6">Requisitos do Sistema</h2>
+      <div class="grid md:grid-cols-2 gap-8">
+        <div>
+          <h3 class="text-2xl font-semibold text-stone-800 mb-4">Requisitos Funcionais (RF)</h3>
+          <p class="text-stone-600 mb-4">Descrevem o que o sistema deve fazer - as funcionalidades que o usuário pode
+            executar. Clique para expandir cada item e ver os detalhes.</p>
+          <div class="space-y-3">
+            <div class="accordion-item bg-white rounded-lg border border-stone-200 shadow-sm">
+              <button
+                class="accordion-header w-full flex justify-between items-center text-left p-4 font-semibold text-stone-800 hover:bg-stone-50">
+                <span>RF01 - Autenticação</span>
+                <span class="accordion-icon transform transition-transform text-teal-500">▼</span>
+              </button>
+              <div class="accordion-content hidden p-4 border-t border-stone-200 text-stone-600">
+                <ul>
+                  <li class="mb-2">▪ O sistema deve permitir que os usuários se autentiquem através de um e-mail e
+                    senha.</li>
+                  <li class="mb-2">▪ Deve haver uma funcionalidade de "Esqueci minha senha".</li>
+                  <li>▪ O sistema deve fazer logout automático após um período de inatividade.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="accordion-item bg-white rounded-lg border border-stone-200 shadow-sm">
+              <button
+                class="accordion-header w-full flex justify-between items-center text-left p-4 font-semibold text-stone-800 hover:bg-stone-50">
+                <span>RF02 - Módulo de Administração</span>
+                <span class="accordion-icon transform transition-transform text-teal-500">▼</span>
+              </button>
+              <div class="accordion-content hidden p-4 border-t border-stone-200 text-stone-600">
+                <ul>
+                  <li class="mb-2">▪ Interface para CRUD (Criar, Ler, Editar, Deletar) de usuários.</li>
+                  <li class="mb-2">▪ O Administrador deve definir o perfil ao criar um novo usuário.</li>
+                  <li class="mb-2">▪ Acesso a um dashboard com métricas chave.</li>
+                  <li>▪ Visualização de logs de atividades importantes.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="accordion-item bg-white rounded-lg border border-stone-200 shadow-sm">
+              <button
+                class="accordion-header w-full flex justify-between items-center text-left p-4 font-semibold text-stone-800 hover:bg-stone-50">
+                <span>RF03 - Módulo da Recepção</span>
+                <span class="accordion-icon transform transition-transform text-teal-500">▼</span>
+              </button>
+              <div class="accordion-content hidden p-4 border-t border-stone-200 text-stone-600">
+                <ul>
+                  <li class="mb-2">▪ Interface para upload de arquivos (.pdf, .png, .jpg, .docx).</li>
+                  <li>▪ Cada upload deve ser associado a um processo/cliente.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="accordion-item bg-white rounded-lg border border-stone-200 shadow-sm">
+              <button
+                class="accordion-header w-full flex justify-between items-center text-left p-4 font-semibold text-stone-800 hover:bg-stone-50">
+                <span>RF04 - Módulo do Conselheiro</span>
+                <span class="accordion-icon transform transition-transform text-teal-500">▼</span>
+              </button>
+              <div class="accordion-content hidden p-4 border-t border-stone-200 text-stone-600">
+                <ul>
+                  <li class="mb-2">▪ Visualizar a lista de processos/atendimentos permitidos.</li>
+                  <li class="mb-2">▪ Abrir um processo para ver documentos e notas associadas.</li>
+                  <li>▪ Adicionar notas de texto aos processos.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3 class="text-2xl font-semibold text-stone-800 mb-4">Requisitos Não Funcionais (RNF)</h3>
+          <p class="text-stone-600 mb-4">Definem como o sistema deve operar, focando em critérios de qualidade como
+            segurança, desempenho e usabilidade.</p>
+          <div class="space-y-3">
+            <div class="p-4 bg-white rounded-lg border border-stone-200 shadow-sm">
+              <h4 class="font-bold text-stone-800">Segurança</h4>
+              <p class="text-sm text-stone-600">Comunicação via HTTPS, senhas com hashing, URLs assinadas para
+                documentos, proteção contra XSS/SQL Injection e backups regulares.</p>
+            </div>
+            <div class="p-4 bg-white rounded-lg border border-stone-200 shadow-sm">
+              <h4 class="font-bold text-stone-800">Desempenho</h4>
+              <p class="text-sm text-stone-600">Carregamento inicial < 3s, respostas de API < 500ms, e upload de
+                  documentos de forma assíncrona.</p>
+            </div>
+            <div class="p-4 bg-white rounded-lg border border-stone-200 shadow-sm">
+              <h4 class="font-bold text-stone-800">Usabilidade e Interface</h4>
+              <p class="text-sm text-stone-600">Interface responsiva para desktop e tablet, com design limpo e
+                intuitivo.</p>
+            </div>
+            <div class="p-4 bg-white rounded-lg border border-stone-200 shadow-sm">
+              <h4 class="font-bold text-stone-800">Manutenibilidade</h4>
+              <p class="text-sm text-stone-600">Código versionado com Git e separação de ambientes (dev, test, prod).
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tecnologias" class="mb-16 scroll-mt-24">
+      <h2 class="text-3xl font-bold text-stone-900 mb-2">Pilha Tecnológica (Tech Stack)</h2>
+      <p class="text-stone-600 mb-8">Tecnologias modernas e performáticas selecionadas para a construção do projeto.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-200">
+          <h4 class="font-bold text-lg mb-2">Front-End</h4>
+          <p class="text-sm text-stone-600"><strong>Next.js:</strong> Framework React para interfaces rápidas e
+            otimizadas.</p>
+          <p class="text-sm text-stone-600 mt-2"><strong>Tailwind CSS:</strong> Framework CSS para estilização ágil e
+            consistente.</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-200">
+          <h4 class="font-bold text-lg mb-2">Back-End</h4>
+          <p class="text-sm text-stone-600"><strong>Bun:</strong> Runtime JavaScript veloz para a API.</p>
+          <p class="text-sm text-stone-600 mt-2"><strong>Prisma:</strong> ORM para interações seguras com o banco de
+            dados.</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-200">
+          <h4 class="font-bold text-lg mb-2">Banco de Dados</h4>
+          <p class="text-sm text-stone-600"><strong>PostgreSQL:</strong> Banco de dados relacional robusto e confiável.
+          </p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-200">
+          <h4 class="font-bold text-lg mb-2">Armazenamento</h4>
+          <p class="text-sm text-stone-600"><strong>Object Storage:</strong> Para guardar documentos de forma segura
+            (Ex: AWS S3, Cloudflare R2, MinIO).</p>
+        </div>
+      </div>
+
+      <div class="mt-12 bg-white p-8 rounded-2xl shadow-sm border border-stone-200">
+        <h3 class="text-2xl font-semibold text-stone-800 mb-2">Exemplo de Dashboard do Administrador</h3>
+        <p class="text-stone-600 mb-6">Como parte dos requisitos, o administrador terá um dashboard. Abaixo, um exemplo
+          de gráfico interativo que poderia ser usado para visualizar a distribuição de documentos por tipo.</p>
+        <div class="chart-container relative mx-auto h-80 max-h-[350px] w-full max-w-md">
+          <canvas id="adminDashboardChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <section id="custos" class="scroll-mt-24">
+      <h2 class="text-3xl font-bold text-stone-900 mb-2">Custos e Infraestrutura</h2>
+      <p class="text-stone-600 mb-8">É importante ressaltar que a operação do sistema envolve custos recorrentes com
+        infraestrutura. Estes custos são variáveis e dependem das escolhas de implementação e da escala de uso.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-200 flex flex-col">
+          <h4 class="font-bold text-lg mb-2">Domínio</h4>
+          <p class="text-sm text-stone-600 flex-grow">Custo anual para o registro do endereço do site (ex:
+            www.suaempresa.com.br). Essencial para o acesso público ao sistema.</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-200 flex flex-col">
+          <h4 class="font-bold text-lg mb-2">Servidor (Hospedagem)</h4>
+          <p class="text-sm text-stone-600 flex-grow">Custo mensal/anual para manter a aplicação online. A decisão entre
+            um servidor local (auto-hospedado) ou um provedor de nuvem (VPS) será tomada em conjunto, considerando
+            segurança e manutenção.</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-200 flex flex-col">
+          <h4 class="font-bold text-lg mb-2">Armazenamento de Documentos</h4>
+          <p class="text-sm text-stone-600 flex-grow">Custo mensal associado ao armazenamento dos arquivos (.pdf, .png,
+            etc.). Este serviço pode ser local ou em nuvem (Cloud Storage), com custos proporcionais ao volume de dados.
+          </p>
+        </div>
+      </div>
+      <div class="mt-8 bg-amber-50 border border-amber-200 text-amber-800 p-6 rounded-2xl">
+        <h4 class="font-bold text-lg mb-2">Nota sobre Escalabilidade</h4>
+        <p class="text-sm">Todos os custos de infraestrutura são escaláveis. Conforme o número de usuários e o volume de
+          dados aumentarem, os recursos necessários e, consequentemente, os custos associados, também aumentarão para
+          garantir o bom desempenho do sistema.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="bg-stone-100 border-t border-stone-200 mt-16">
+    <p>
+      <strong>ARNALDO VICTOR MARTINS DE AZEVEDO®</strong> is a business registered<br />
+      CNPJ: 49.638.452/0001-92 — All rights reserved.<br />
+      Brazil - CE, Fortaleza — Rua 6 (Cj Veneza Tropical) 6 Bloco 4, Apt 406<br />
+      CEP: 60743-060<br />
+      <a href="https://kryodev.com/" target="_blank" style="color: #666; text-decoration: none;">
+        https://kryodev.com/
+      </a>
+    </p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const roleButtons = document.querySelectorAll('.role-btn');
+      const tableCells = document.querySelectorAll('.table-cell-data');
+
+      roleButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const selectedRole = button.dataset.role;
+
+          roleButtons.forEach(btn => {
+            btn.classList.remove('bg-teal-600', 'text-white');
+            btn.classList.add('bg-white', 'text-stone-700');
+          });
+          button.classList.add('bg-teal-600', 'text-white');
+          button.classList.remove('bg-white', 'text-stone-700');
+
+          tableCells.forEach(cell => {
+            cell.classList.remove('bg-teal-100', 'rounded-lg', 'font-bold', 'text-teal-800', 'table-highlight');
+            cell.classList.add('opacity-40');
+
+            if (selectedRole === 'todos' || cell.dataset.role === selectedRole) {
+              cell.classList.remove('opacity-40');
+            }
+            if (cell.dataset.role === selectedRole) {
+              cell.classList.add('bg-teal-100', 'rounded-lg', 'font-bold', 'text-teal-800', 'table-highlight');
+            }
+          });
+        });
+      });
+
+      document.querySelector('.role-btn[data-role="todos"]').click();
+
+      const accordionHeaders = document.querySelectorAll('.accordion-header');
+      accordionHeaders.forEach(header => {
+        header.addEventListener('click', () => {
+          const content = header.nextElementSibling;
+          const icon = header.querySelector('.accordion-icon');
+          content.classList.toggle('hidden');
+          icon.classList.toggle('rotate-180');
+        });
+      });
+
+      const ctx = document.getElementById('adminDashboardChart').getContext('2d');
+      const adminChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['PDFs', 'Imagens (PNG/JPG)', 'Documentos Word'],
+          datasets: [{
+            label: 'Documentos por Tipo',
+            data: [152, 88, 45],
+            backgroundColor: [
+              'rgb(20, 184, 166)',
+              'rgb(13, 148, 136)',
+              'rgb(15, 118, 110)'
+            ],
+            hoverOffset: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+            },
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  let label = context.label || '';
+                  if (label) {
+                    label += ': ';
+                  }
+                  if (context.parsed !== null) {
+                    label += context.parsed + ' arquivos';
+                  }
+                  return label;
+                }
+              }
+            }
+          }
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
