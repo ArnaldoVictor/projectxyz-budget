@@ -4,16 +4,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Visualizador de Requisitos do Projeto</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <!-- Chosen Palette: "Calm Neutral" -->
-  <!-- Application Structure Plan: A single-page, section-based layout was chosen because the source material is textual and structural, not primarily numerical. The goal is to make a dense document scannable and comparable. The key interaction is filtering the permissions table by user role, which is the most complex piece of information and benefits most from interactivity. Collapsible sections for requirements reduce initial information overload. A simple chart is included to visually represent a functional requirement (the admin dashboard), making the concept more tangible. This structure translates the report's logical sections into a user-friendly, interactive format. -->
-  <!-- Visualization & Content Choices: 1. Permissions Table: Report Info -> User permissions table; Goal -> Compare roles; Viz -> Interactive HTML Table with JS-driven styling; Interaction -> Role filter buttons highlight permissions; Justification -> More engaging and clearer than a static table. 2. Requirements: Report Info -> FR/NFR lists; Goal -> Organize; Viz -> Collapsible accordion sections; Interaction -> Click to expand/collapse; Justification -> Prevents a wall of text. 3. Tech Stack: Report Info -> Technology list; Goal -> Inform; Viz -> Styled HTML grid/cards; Interaction -> Static display; Justification -> More visually appealing than a list. 4. Admin Dashboard Chart: Report Info -> FR02 (Admin Dashboard); Goal -> Illustrate a feature; Viz -> Chart.js Doughnut Chart; Interaction -> Filter dropdown and hover tooltips; Justification -> Provides a tangible example of a key system feature. -->
-  <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+  <title>KryoDev – Dev & Digital Projects</title>
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-title" content="KryoDev" />
+  <link rel="manifest" href="/site.webmanifest" />
   <style>
     body {
       font-family: 'Inter', sans-serif;
@@ -389,7 +391,7 @@
 
   <footer class="bg-stone-100 border-t border-stone-200 mt-16">
     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-sm text-stone-500">
-      <p><a href="https://kryodev.com" target="_blank">KryoDev - 2024</a></p>
+      <p><a href="https://kryodev.com" target="_blank" class="hover:text-blue-800">KryoDev - 2024</a></p>
     </div>
   </footer>
 
